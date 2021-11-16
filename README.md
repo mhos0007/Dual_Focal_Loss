@@ -7,7 +7,7 @@ The MATLAB file: dfl_loss_function.m, contains the source code. The python code 
 To use it, simply place the dfl_loss_function.m in your current working MATLAB directory, or alternatively, add the location of dfl_loss_function.m in your MATLAB path.
 Then, create the "classification layer" object in your neural network code as follows:
 
-the_classification_layer = dfl_loss_function('<give some name>');
+the_classification_layer = dfl_loss_function('give any name');
   
   
 There are some loss control parameters associated with DFL, which you can tune from the backwardLoss() function inside dfl_loss_function.m. In the next update, these loss control parameters will be made as arguments of dfl_loss_function().
