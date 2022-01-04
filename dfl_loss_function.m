@@ -19,7 +19,7 @@ classdef dfl_loss_function < nnet.layer.ClassificationLayer
                 loss = mean(loss_mae(:)); %the mean MAE loss
                 
                 %In case you would like to use DFL as the "forward loss",
-                %the expression is as follows (uncomment the lines when using):
+                %the expression is as follows (uncomment lines 24-35):
                 
 %                 thres = 0.001;
 %                 alpha = 1;
@@ -48,32 +48,32 @@ classdef dfl_loss_function < nnet.layer.ClassificationLayer
                 Y_on_negative_classes = this.prevent_approaching_zero(rho-Y, thres);
                                 
                 %In the following equation, the term "(2.*T-1)" is equivalent 
-                %to the derivative of abs(T-Y). The reason of using "1.*(2.*T-1)"
-                %is to prevent the denominator approaching zero, and thus
+                %to the derivative of abs(T-Y). The reason of using this
+                %is to prevent the denominator from approaching zero, and thus
                 %providing a numerical stability.
 
                 dX = (-T./(Y_on_positive_classes) + beta.*(1-T)./(Y_on_negative_classes) ...
                     - alpha.*(2.*T-1).^gamma) .* (1./numObservations);
                 
                 %In case you are wondering, the derivative of DFL, keeping
-                %the derivative of abs(T-Y), would look like the following.
-                %If you use this version, you might notice numerical
-                %unstability in the training due to "exploding gradient",
-                %caused by the derivative of abs(T-Y). Although the
-                %function: prevent_approaching_zero() can be used, with a very small
-                %threshold value, to avoid this, we prefer simply using
-                %the equivalent term: "(2.*T-1)".
+                %the original derivative of abs(T-Y), would look like the following.
+                %If you use this version, you might notice numerical unstability 
+                %in the training due to "exploding gradient", caused by the derivative 
+                %of abs(T-Y). Although the function: prevent_approaching_zero() 
+                %can be used, with a very small threshold value, we prefer simply 
+                %using the equivalent term: "(2.*T-1)" for the numerical stability.
                 
 %                 dX = (-T./(Y_on_positive_classes) + beta.*(1-T)./(Y_on_negative_classes) ...
 %                     - alpha.*(abs(T-Y)./(T-Y)).^gamma) .* (1./numObservations);
+        
         end
 
         function out = prevent_approaching_zero(this, z, thres)
 
-                %This function prevents the denominator approach zero; otherwise 
-                %the loss will be huge and delay the convergence. We used 0.001 
-                %as a threshold value. However, a different threshold value may 
-                %work better for a different problem domain.
+                %This function prevents the denominator from approaching zero; otherwise 
+                %the loss will 'explode' and hence delay the convergence. We used 0.001 
+                %as a threshold value such that any value, z < 0.001 = 0.001. However, 
+                %a different threshold value may work better for a different problem domain.
 
                 z(z < thres) = thres;
                 out = z;
